@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+        stages{
+            stage ('Checkout SCM') {
+                steps {
+                    git credentialsId: 'GitHub', url: 'https://github.com/sruhub/cloudformation.git'
+                }
+                
+            }
+            
+            stage ('create stack') {
+                steps {
+                    withAWS(credentials: 'AWS-Credentials', region: 'us-east-1') {
+                        println('Connected to AWS')
+                        script {
+                          def createstack = cfnUpdate(stack:'my-stack', file:'ec2.yaml', params:['KeyName=project1', 'InstanceType=t2.micro'], timeoutInMinutes:10, tags:['Name=cfn-jenkins'])
+                        }
+                    }
+                }
+
+            }
+
+            stage ('destroy stack') {
+                steps {
+                    withAWS(credentials: 'AWS-Credentials', region: 'us-east-1') {
+                        println('Connected to AWS')
+                        script {
+                          def deletestack = cfnDelete(stack:'my-stack1')
+                        }
+                    }
+                }
+
+            }
+
+        }
+}
