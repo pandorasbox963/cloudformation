@@ -1,0 +1,41 @@
+---
+Description: 'AWS CloudFormation Sample Template Config for BaffleShield Launch: This
+  template demonstrates the usage of AWS Config resources.  **WARNING** You will be
+  billed for the AWS resources used if you create a stack from this template.'
+Parameters:
+  LatestAmiId:
+    Type:  'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+  MyKeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: project1
+    ConstraintDescription: Must be a valid key pair in AWS.
+  MyInstanceType:
+    Type: String
+    Default: t2.micro
+    ConstraintDescription: Must be a valid EC2 instance type.
+  MySecurityGroup:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: Provide one or more security groups for the instance existing in
+      the network with selected subnet.
+  MySubnetId:
+    Type: AWS::EC2::Subnet::Id
+    Description: Provide the subnet existing in the network with selected security
+      group(s).
+Resources:
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId:
+        Ref: LatestAmiId
+      SecurityGroupIds:
+        Ref: MySecurityGroup
+      SubnetId:
+        Ref: MySubnetId
+      InstanceType:
+        Ref: MyInstanceType
+      KeyName:
+        Ref: MyKeyName
+      Tags:
+      - Key: Name
+        Value: srujana-12sep
